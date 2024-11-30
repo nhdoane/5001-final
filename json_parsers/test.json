@@ -1,0 +1,95 @@
+{
+  "bills":[ 
+    {
+      "id": 1,
+      "name": "landlords, inc",
+      "description": "Monthly rent",
+      "amount": 1200.00,
+      "due_date": "2024-11-15"
+    },
+    {
+      "id": 2,
+      "name": "Hydro, LLC",
+      "description": "water bill",
+      "amount": 200.00,
+      "due_date": "2024-11-15"
+    },
+    {
+      "id": 3,
+      "name": "shocking services",
+      "description": "electric bill",
+      "amount": 150.00,
+      "due_date": "2024-11-15"
+    },
+    {
+      "id": 5,
+      "name": "electricity bill",
+      "description": "monthly electricity usage",
+      "amount": 120.50,
+      "due_date": "2024-12-01"
+    },
+    {
+      "id": 6,
+      "name": "internet subscription",
+      "description": "monthly high-speed internet",
+      "amount": 60.00,
+      "due_date": "2024-11-30"
+    },
+    {
+      "id": 7,
+      "name": "gym membership",
+      "description": "monthly fitness subscription",
+      "amount": 45.00,
+      "due_date": "2024-12-05"
+    },
+    {
+      "id": 8,
+      "name": "car insurance",
+      "description": "quarterly vehicle insurance payment",
+      "amount": 200.00,
+      "due_date": "2025-01-15"
+    },
+    {
+      "id": 9,
+      "name": "streaming services",
+      "description": "monthly streaming platform subscriptions",
+      "amount": 25.99,
+      "due_date": "2024-12-02"
+    },
+    {
+      "id": 10,
+      "name": "phone bill",
+      "description": "monthly phone plan",
+      "amount": 75.00,
+      "due_date": "2024-11-29"
+    },
+    {
+      "id": 11,
+      "name": "water bill",
+      "description": "monthly water utility",
+      "amount": 40.75,
+      "due_date": "2024-12-10"
+    },
+    {
+      "id": 12,
+      "name": "credit card payment",
+      "description": "minimum monthly payment for credit card",
+      "amount": 150.00,
+      "due_date": "2024-12-07"
+    },
+    {
+      "id": 13,
+      "name": "rent",
+      "description": "monthly house rent",
+      "amount": 1500.00,
+      "due_date": "2024-12-01"
+    },
+    {
+      "id": 14,
+      "name": "pet supplies",
+      "description": "monthly essentials for pets",
+      "amount": 35.00,
+      "due_date": "2024-11-28"
+    }
+  ]
+}
