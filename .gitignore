@@ -1,5 +1,5 @@
 # user specific
-backup_testing/*
+backup_testing/*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
