@@ -4,35 +4,39 @@ NOTE: error handling is incredibly generic and not best practice at the moment
 """
 import sqlite3 as sql
 import os
+import shutil
 
+_here = os.path.dirname(os.path.abspath(__file__))
 
 class Database:
 
-    def __init__(self):
+    def __init__(self, object_only = False):
         """creates a local sqlite3 db (if it doesnt exist)
             and creates the 'bills' and 'users' tables (also if they dont exist)
 
-        Returns:
-            sqlite3.connection: a sqlite3 connection object, connected to the local db
-            sqlite3.cursor: a sqlite3 cursor object, for posting and fetching data to and from the local db
+        :parameter
+            object_only: Bool used to create a database object for the purposes of deleting and resetting the database file.
+            Should remain false in 99% of cases
         """
-        # find the current location of this file, and create/open the database from here
-        here = os.path.dirname(os.path.abspath(__file__))
-        self.con = sql.connect(here + '\\local.db')
-        self.cur = self.con.cursor()
-        self.cur.executescript('CREATE TABLE IF NOT EXISTS users(user_id INTEGER NOT NULL PRIMARY KEY, \
-                          username TEXT, \
-                          password TEXT); \
-                          ')
-        self.con.commit()
-        self.cur.executescript('CREATE TABLE IF NOT EXISTS bills(bill_id INTEGER NOT NULL PRIMARY KEY, \
-                          user_id INTEGER, \
-                          name TEXT, \
-                          desc TEXT, \
-                          amt INTEGER, \
-                          due_date DATE); \
-                          ')
-        self.con.commit()
+        if object_only:
+            pass
+        else:
+            # find the current location of this file, and create/open the database from here
+            self.con = sql.connect(_here + '\\local.db')
+            self.cur = self.con.cursor()
+            self.cur.executescript('CREATE TABLE IF NOT EXISTS users(user_id INTEGER NOT NULL PRIMARY KEY, \
+                              username TEXT, \
+                              password TEXT); \
+                              ')
+            self.con.commit()
+            self.cur.executescript('CREATE TABLE IF NOT EXISTS bills(bill_id INTEGER NOT NULL PRIMARY KEY, \
+                              user_id INTEGER, \
+                              name TEXT, \
+                              desc TEXT, \
+                              amt INTEGER, \
+                              due_date DATE); \
+                              ')
+            self.con.commit()
 
     def insert_bill(self, bills: dict):
         """inserts a bill into the database.
@@ -107,6 +111,25 @@ class Database:
             return resp.fetchall()
         except Exception as e:
             raise e('Error in search_bill')
+
+    # these probably could have been one method instead of two
+    # but i really didnt want to call a method that deletes the database from outside the db class
+    def __delete_db(self):
+        db_file = _here + '\\local.db'
+        if os.path.isfile(db_file):
+            os.remove(db_file)
+        else:
+            raise FileNotFoundError('The database file was not found, skipping delete operation')
+
+    def reset_db(self):
+        self.__delete_db()
+
+    def backup_db(self, save_dir):
+        db_file = _here + '\\local.db'
+        if os.path.isfile(db_file):
+            shutil.copy(db_file, save_dir)
+        else:
+            raise FileNotFoundError('The database file was not found, the file was not copied')
 
     def close(self):
         """
