@@ -1,11 +1,16 @@
 """
 Handles input from the cmd line and provides most of the base functionality for main.py
+Also provides methods for the GUI
 """
 from threading import Thread, Lock
+from tkinter import messagebox
 import re
+
+from requests.packages import target
+
+from json_parsers.jparser import db_test_data
 from sqlite_db.db import Database
 from conversions.conversions import convert_for_storage, convert_from_storage
-from tabulate import tabulate
 
 
 def bill_entry():
@@ -73,7 +78,7 @@ def bill_entry():
 
     # send them away to the local database
     lock = Lock()
-    bill_add_thread = Thread(target=db.insert_bill(bill), args=(lock))
+    bill_add_thread = Thread(target=db.insert_bill(bill), args=(lock,))
     bill_add_thread.start()
     bill_add_thread.join()
     db.close()
@@ -102,6 +107,27 @@ def remove_bill(bill_id: int):
     db = Database()
     result = db.remove_bill(bill_id)
     return result
+
+
+def reset_database():
+    try:
+        db = Database(object_only=True)
+        db.reset_db()
+    except FileNotFoundError as fnf:
+        messagebox.showinfo('File not found:', str(fnf))
+    db_test_data()
+
+
+def backup_database(save_dir):
+    try:
+        lock = Lock()
+        db = Database(object_only=True)
+        backup = Thread(target=db.backup_db(save_dir), args=(lock,))
+        backup.start()
+        backup.join()
+        return True
+    except FileNotFoundError as fnf:
+        messagebox.showinfo('File not found:', str(fnf))
 
 
 def test():

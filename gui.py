@@ -1,12 +1,18 @@
 """
 Incomplete GUI for ease of use
 """
-import tkinter as tk
-from tkinter import ttk, messagebox
+# built-in
+import os.path
 import sys
-
-from input import bill_entry, bill_list, remove_bill
+import tkinter as tk
+from tkinter import ttk, messagebox, font, filedialog
+# custom methods/classes
+from input import bill_entry, bill_list, remove_bill, reset_database, backup_database
 from search.search import Search
+
+
+def get_font_name():
+    return font.nametofont('TkDefaultFont').actual()
 
 
 class GUI(tk.Tk):
@@ -37,7 +43,7 @@ class GUI(tk.Tk):
         ttk.Button(self.left_frame, text='List Bills', command=self._bill_list_table).pack(side='top')
         ttk.Button(self.left_frame, text='Search Bills', command=self._search).pack(side='top')
         ttk.Button(self.left_frame, text='Remove Bill', command=self._remove_bill).pack(side='top')
-        ttk.Button(self.left_frame, text='Quit', command=self._close).pack(side='bottom')
+        ttk.Button(self.left_frame, text='Quit', command=self.__close).pack(side='bottom')
         ttk.Button(self.left_frame, text='Settings', command=self._settings).pack(side='bottom')
 
     # TODO: need to finish this one too
@@ -108,11 +114,53 @@ class GUI(tk.Tk):
     def _remove_bill(self):
         pass
 
-    # TODO: Settings needs to be completed
     def _settings(self):
-        pass
+        self.__clear_frame()
+        default_font = get_font_name()
+        settings_header = ttk.Label(self.right_frame, text='Implementation Options')
+        settings_header.config(font=font.Font(family=default_font['family'], size=11, underline=True, weight='bold'))
+        settings_header.pack(side='top')
+        # database reset option
+        description_delete = ('Deletes and resets the database for testing purposes. Creates a new database pre-filled with test data.\n'
+                       'Note: If you have any data you wish to keep, please create a backup of the database file first')
+        title_label = ttk.Label(self.right_frame, text='Reset Database')
+        title_label.config(font=font.Font(family=default_font['family'], size=10, weight='bold'))
+        title_label.pack(side='top', anchor='nw')
+        desc_label = ttk.Label(self.right_frame, text=description_delete)
+        desc_label.pack(side='top', anchor='nw')
+        ttk.Button(self.right_frame, text='Reset Database', command=self.__reset_db_confirm).pack(side='top', anchor='ne')
+        # database backup option
+        description_backup = 'Creates a backup of the current database file (if it exists) at a location of your choosing'
+        backup_label = ttk.Label(self.right_frame, text='Database backup')
+        backup_label.config(font=font.Font(family=default_font['family'], size=10, weight='bold'))
+        backup_label.pack(side='top', anchor='nw')
+        backup_desc_label = ttk.Label(self.right_frame, text=description_backup)
+        backup_desc_label.pack(side='top', anchor='nw')
+        ttk.Button(self.right_frame, text='Backup Database', command=self.__backup_db).pack(side='top', anchor='ne')
 
-    def _close(self):
+    def __reset_db_confirm(self):
+        if messagebox.askquestion('Reset Database', 'You cannot undo this once it has been done.\n'
+                                                    'Are you sure you want to reset the database?') == 'yes':
+            reset_database()
+        else:
+            messagebox.showinfo('Reset Database', 'The database was not reset')
+
+    def __backup_db(self):
+        messagebox.showinfo('Database Backup', 'Choose a location to place the database backup')
+        save_dir = filedialog.askdirectory()
+        if os.path.isfile(save_dir + '\\local.db'):
+            answer = messagebox.askquestion('Database Backup', 'This location already has a database file\n'
+                                                          'Are you sure you wish to overwrite it?')
+            if answer == 'yes':
+                if backup_database(save_dir):
+                    messagebox.showinfo('Database Backup', 'Database backup successful')
+            else:
+                messagebox.showinfo('Database Backup', 'The database file was not copied')
+        else:
+            if backup_database(save_dir):
+                messagebox.showinfo('Database Backup', 'Database backup successful')
+
+    def __close(self):
         """
         Class helper method used to verify the user wants to quit the program
         """
@@ -121,7 +169,7 @@ class GUI(tk.Tk):
 
     def __clear_frame(self):
         """
-        'Private' method used for clearing the right frame
+        'Private' method used for clearing the right frame when selecting different options
         """
         for widget in self.right_frame.winfo_children():
             widget.destroy()
