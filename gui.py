@@ -1,3 +1,6 @@
+"""
+Incomplete GUI for ease of use
+"""
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sys
@@ -30,20 +33,24 @@ class GUI(tk.Tk):
         """
         Main menu displayed in the left_frame
         """
-        ttk.Button(self.left_frame, text='Add Bill', command=self._bill_add).grid(column=0, row=0, sticky='NSW', padx=5, pady=2)
-        ttk.Button(self.left_frame, text='List Bills', command=self._bill_list_table).grid(column=0, row=1, sticky='NSW', padx=5,pady=2)
-        ttk.Button(self.left_frame, text='Search Bills', command=self._search).grid(column=0, row=2, sticky='NSW', padx=5, pady=2)
-        ttk.Button(self.left_frame, text='Remove Bill').grid(column=0, row=3, sticky='NSW', padx=5, pady=2)
-        ttk.Button(self.left_frame, text='Quit', command=self._close).grid(column=0, row=4, sticky='NSW', padx=5, pady=2)
+        ttk.Button(self.left_frame, text='Add Bill', command=self._bill_add).pack(side='top')
+        ttk.Button(self.left_frame, text='List Bills', command=self._bill_list_table).pack(side='top')
+        ttk.Button(self.left_frame, text='Search Bills', command=self._search).pack(side='top')
+        ttk.Button(self.left_frame, text='Remove Bill', command=self._remove_bill).pack(side='top')
+        ttk.Button(self.left_frame, text='Quit', command=self._close).pack(side='bottom')
+        ttk.Button(self.left_frame, text='Settings', command=self._settings).pack(side='bottom')
 
+    # TODO: need to finish this one too
     def _bill_add(self):
+        """
+        Class helper method for adding a new bill
+        """
         self.__clear_frame()
         bill_name = tk.StringVar()
         bill_desc = tk.StringVar()
         bill_amt = tk.StringVar()
         bill_dd = tk.StringVar()
         # bill ID and user ID will be taken care of by the controller so the methods calling the DB arent exposed by the view
-        user_id = 1
         ttk.Label(self.right_frame, text='Bill Name:').pack()
         ttk.Entry(self.right_frame, textvariable=bill_name).pack()
         ttk.Label(self.right_frame, text='Bill Description:').pack()
@@ -73,9 +80,7 @@ class GUI(tk.Tk):
         table.heading('desc', text='Description')
         for bill in bills:
             table.insert("", tk.END, values=(bill[0], bill[1], bill[2], bill[3], bill[4]))
-        # table.grid(column=0, row=0, sticky='NSEW')
         vsb = ttk.Scrollbar(self.right_frame, orient='vertical', command=table.yview)
-        # vsb.grid(column=1, row=0, sticky='NSEW')
         vsb.pack(side='right', fill='y')
         table.pack(side='right', fill='both')
         table.configure(yscrollcommand=vsb.set)
@@ -98,6 +103,13 @@ class GUI(tk.Tk):
         pass
 
     def _search_billid(self):
+        pass
+
+    def _remove_bill(self):
+        pass
+
+    # TODO: Settings needs to be completed
+    def _settings(self):
         pass
 
     def _close(self):
