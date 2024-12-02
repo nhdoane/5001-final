@@ -16,7 +16,8 @@ def validate(query, caller):
     :return: A boolean value based on whether the query can be used for the specified search
     """
     if caller == 's_d':
-        return re.fullmatch(r"\d{4}-[0-1]?[1-9]-[0-3]?[0-9]", query)
+        # full date matching r"\d{4}-[0-1]?[1-9]-[0-3]?[0-9]"
+        return re.search(r"\d{0,4}", query)
     elif caller == 's_n':
         if type(query) is not str:
             raise TypeError
@@ -54,7 +55,8 @@ class Search:
         if not validate(self.query, 's_d'):
             raise ValueError('The date is not in the correct format (YYYY-MM-DD)')
         else:
-            script = ['SELECT * FROM bills WHERE due_date = ?;', (self.query,)]
+            self.set_query(f'%{self.query}%')
+            script = ['SELECT * FROM bills WHERE due_date like ?;', (self.query,)]
             db = Database()
             return db.search_bill(script)
 
