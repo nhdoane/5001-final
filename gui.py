@@ -48,7 +48,7 @@ class GUI(tk.Tk):
         ttk.Button(self.left_frame, text='Quit', command=self.__close).pack(side='bottom')
         ttk.Button(self.left_frame, text='Settings', command=self._settings).pack(side='bottom')
 
-    # TODO: need to finish this one too
+    # TODO: add add bill functionality
     def _bill_add(self):
         """
         Class helper method for adding a new bill
@@ -90,8 +90,6 @@ class GUI(tk.Tk):
         ttk.Button(self.search_options, text='Name', command=self._search_name).pack(side='left', anchor='nw')
         ttk.Button(self.search_options, text='Bill ID', command=self._search_billid).pack(side='left', anchor='nw')
 
-
-    # TODO: search GUI needs to be completed
     def _search_date(self):
         """
         Class helper method for displaying search-by-date
@@ -168,6 +166,7 @@ class GUI(tk.Tk):
         for i in range(3):
             self.search_options.winfo_children()[-1].destroy()
 
+    # TODO: add remove bill functionality
     def _remove_bill(self):
         """
         Class helper method for displaying the remove bill section
