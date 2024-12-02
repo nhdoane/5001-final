@@ -62,10 +62,8 @@ class Database:
 
     def get_next_bill_id(self, user_id: int):
         """Returns the next available bill ID in a user's stored data. Does not handle opening or closing a connection to the database.
-
         Args:
             user_id (int): the ID of the user
-
         Returns:
             resp + 1: The max bill_id in the user's data, incremented by one
         """

@@ -6,14 +6,15 @@ from threading import Thread, Lock
 from tkinter import messagebox
 import re
 
-from requests.packages import target
-
 from json_parsers.jparser import db_test_data
 from sqlite_db.db import Database
 from conversions.conversions import convert_for_storage, convert_from_storage
 
 
 def bill_entry():
+    """
+    opens a connection to the database, collects relevant bill information, and passes that information to the database.
+    """
     # init vars
     user_id = 1
     name = ''
@@ -85,6 +86,11 @@ def bill_entry():
 
 
 def bill_list():
+    """
+    Opens a db connection and pulls a list of all bills associated with a user ID.
+    Appends those bills to a list that follows a specific format that makes it easier to pull data for the GUI
+    :return: list A list of bills with minor formatting changes
+    """
     db = Database()
     bills = db.return_all_bills(1)
     # header = ['Bill ID', 'Name', 'Amount', 'Due Date', 'Description']
@@ -104,21 +110,38 @@ def bill_list():
 
 
 def remove_bill(bill_id: int):
+    """
+    Opens the database and deletes the bill with the corresponding bill ID
+    :param bill_id: int the unique ID of the bill to be deleted
+    :return: Nothing, at the moment
+    """
     db = Database()
     result = db.remove_bill(bill_id)
     return result
 
 
 def reset_database():
+    """
+    create an empty database object and initiates the database reset procedure.
+    Throws an error if the file is not found during the deletion stage
+    :return:
+        returns True if the database was reset and the data was successfully added
+    """
     try:
         db = Database(object_only=True)
         db.reset_db()
     except FileNotFoundError as fnf:
         messagebox.showinfo('File not found:', str(fnf))
-    db_test_data()
+    return db_test_data()
 
 
 def backup_database(save_dir):
+    """
+
+    :param save_dir: string The string representation of the directory path to store a copy of the database to
+    :return:
+        returns True if the backup was successful
+    """
     try:
         lock = Lock()
         db = Database(object_only=True)
@@ -131,6 +154,11 @@ def backup_database(save_dir):
 
 
 def test():
+    """
+    Test function that just opens a db connection and tries to pull the next unique bill ID, which is the max bill + 1
+    literally only used this for testing certain db connection functions. deprecated since i have other methods
+    successfully connecting to the database to test with
+    """
     db = Database()
     print(db.get_next_bill_id(1))
     db.close()

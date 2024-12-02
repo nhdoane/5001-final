@@ -39,6 +39,10 @@ class Search:
         self.query = ''
 
     def set_query(self, query):
+        """
+        Sets the query attribute to the passed piece of data
+        :param query: string/int the new value of the query attribute
+        """
         self.query = query
 
     def search_date(self):
@@ -72,6 +76,11 @@ class Search:
             return db.search_bill(script)
 
     def search_billID(self):
+        """
+        Used with an int. Searches the bill_id column of the database with the provided int.
+        Should throw TypeError if an incorrect type is used
+        :return: a single bill matching the bill_id provided
+        """
         result = None
         try:
             result = validate(self.query, 's_b')

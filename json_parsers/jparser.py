@@ -1,3 +1,8 @@
+"""
+A json parser used for resetting the database mostly. jparser and jparser_multi were originally just used to create the
+database when running json_testing.py (which has since been deleted), but have been appropriated for use with
+resetting and repopulating the test db
+"""
 import json
 import os
 from threading import Thread, Lock
@@ -56,31 +61,37 @@ def jparser_multi(jfile):
 
 
 def db_test_data():
-    lock = Lock()
-    # testing multi bill json input
-    here = os.path.dirname(os.path.abspath(__file__))
-    json_input = here + '\\test.json'
+    """
+    repopulates a newly created database with test data.
+    :return:
+    """
+    try:
+        lock = Lock()
+        # testing multi bill json input
+        here = os.path.dirname(os.path.abspath(__file__))
+        json_input = here + '\\test.json'
 
-    with open(json_input) as file:
-        parsed_input = json.load(file)
+        with open(json_input) as file:
+            parsed_input = json.load(file)
 
-    # input the multi-bill json
-    # this will currently "fail" due to it existing in the db already
-    # delete local.db in the API dir and rerun to see a successful write
-    jpm_thread = Thread(target=jparser_multi(parsed_input), args=(lock))
-    jpm_thread.start()
-    # not sure if these join statements are needed, as it performs the same when they are commented out,
-    # but because they cause the program to wait until the thread finishes, i'll keep them there for good measure
-    jpm_thread.join()
+        # input the multi-bill json
+        jpm_thread = Thread(target=jparser_multi(parsed_input), args=(lock,))
+        jpm_thread.start()
+        # not sure if these join statements are needed, as it performs the same when they are commented out,
+        # but because they cause the program to wait until the thread finishes, i'll keep them there for good measure
+        jpm_thread.join()
 
-    # testing single bill json input
-    jsingle_input = here + '\\test_single.json'
+        # testing single bill json input
+        jsingle_input = here + '\\test_single.json'
 
-    with open(jsingle_input) as file:
-        parsed_input = json.load(file)
+        with open(jsingle_input) as file:
+            parsed_input = json.load(file)
 
-    # threading is necessary to prevent race conditions
-    # as we are currently perform multiple write operations to a single database
-    jp_thread = Thread(target=jparser(parsed_input), args=(lock))
-    jp_thread.start()
-    jp_thread.join()
+        # threading is necessary to prevent race conditions
+        # as we are currently perform multiple write operations to a single database
+        jp_thread = Thread(target=jparser(parsed_input), args=(lock,))
+        jp_thread.start()
+        jp_thread.join()
+        return True
+    except Exception as e:
+        print('error in db_test_data:', e)

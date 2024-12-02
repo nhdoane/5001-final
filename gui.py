@@ -19,7 +19,7 @@ class GUI(tk.Tk):
 
     def __init__(self):
         """
-        Instantiates the GUI base window
+        Instantiates the GUI base window, frames, and creates the menu for further interaction
         """
         super().__init__()
         self.title('Now I\'m a BILLiever')
@@ -33,9 +33,9 @@ class GUI(tk.Tk):
                       f'+{int(screen_dimensions[0]/2 - window_dimensions[0]/2)}'
                       f'+{int(screen_dimensions[1]/2 - window_dimensions[1]/2)}')
 
-        self.landing_page()
+        self.menu()
 
-    def landing_page(self):
+    def menu(self):
         """
         Main menu displayed in the left_frame
         """
@@ -93,7 +93,7 @@ class GUI(tk.Tk):
 
     def _search(self):
         """
-        Class helper method containing the logic for displaying bill search functionality
+        Class helper method containing the logic for displaying and choosing bill search functionality
         """
         self.__clear_frame()
         ttk.Label(self.right_frame, text='Search by:').grid(column=1,row=0, sticky='W')
@@ -103,18 +103,33 @@ class GUI(tk.Tk):
 
     # TODO: search GUI needs to be completed
     def _search_date(self):
+        """
+        Class helper method for displaying search-by-date
+        """
         pass
 
     def _search_name(self):
+        """
+        Class helper method for displaying search-by-name
+        """
         pass
 
     def _search_billid(self):
+        """
+        Class helper method for displaying serach-by-bill ID
+        """
         pass
 
     def _remove_bill(self):
+        """
+        Class helper method for displaying the remove bill section
+        """
         pass
 
     def _settings(self):
+        """
+        Class helper method for displaying the settings/options page
+        """
         self.__clear_frame()
         default_font = get_font_name()
         settings_header = ttk.Label(self.right_frame, text='Implementation Options')
@@ -139,13 +154,21 @@ class GUI(tk.Tk):
         ttk.Button(self.right_frame, text='Backup Database', command=self.__backup_db).pack(side='top', anchor='ne')
 
     def __reset_db_confirm(self):
+        """
+        'Private' method for resetting the database. Would really just exist for dev/impl ops
+        """
         if messagebox.askquestion('Reset Database', 'You cannot undo this once it has been done.\n'
                                                     'Are you sure you want to reset the database?') == 'yes':
-            reset_database()
+           if reset_database():
+               messagebox.showinfo('Reset Database', 'The database has been reset')
         else:
             messagebox.showinfo('Reset Database', 'The database was not reset')
 
     def __backup_db(self):
+        """
+        'Private' method for backing up the current database. Would be unmanageable at larger database volumes
+        but works fine for dev/impl purposes
+        """
         messagebox.showinfo('Database Backup', 'Choose a location to place the database backup')
         save_dir = filedialog.askdirectory()
         if os.path.isfile(save_dir + '\\local.db'):
@@ -162,7 +185,7 @@ class GUI(tk.Tk):
 
     def __close(self):
         """
-        Class helper method used to verify the user wants to quit the program
+        'Private' method used to verify the user wants to quit the program
         """
         if messagebox.askquestion('Quit', 'Are you sure you want to quit?') == 'yes':
             sys.exit(0)
@@ -177,5 +200,6 @@ class GUI(tk.Tk):
 
 
 if __name__ == '__main__':
+    # instantiates the GUI object and starts the tkinter mainloop
     app = GUI()
     app.mainloop()
