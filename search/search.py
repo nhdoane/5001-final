@@ -58,7 +58,9 @@ class Search:
             self.set_query(f'%{self.query}%')
             script = ['SELECT * FROM bills WHERE due_date like ?;', (self.query,)]
             db = Database()
-            return db.search_bill(script)
+            resp = db.search_bill(script)
+            db.close()
+            return resp
 
     def search_name(self):
         """
@@ -75,7 +77,9 @@ class Search:
             self.set_query(f'%{self.query}%')
             script = ['SELECT * FROM bills WHERE name LIKE ?;', (self.query,)]
             db = Database()
-            return db.search_bill(script)
+            resp = db.search_bill(script)
+            db.close()
+            return resp
 
     def search_billID(self):
         """
@@ -91,4 +95,6 @@ class Search:
         if result:
             script = ['SELECT * FROM bills WHERE bill_id = ?;', (self.query,)]
             db = Database()
-            return db.search_bill(script)
+            resp = db.search_bill(script)
+            db.close()
+            return resp

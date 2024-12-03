@@ -29,6 +29,7 @@ def jparser(jfile):
         'user_id': 1
     }
     db.insert_bill(bills)
+    db.close()
 
 
 def jparser_multi(jfile):
@@ -58,6 +59,7 @@ def jparser_multi(jfile):
             'user_id': 1
         }
         db.insert_bill(bills[bill['id']])
+    db.close()
 
 
 def db_test_data():
