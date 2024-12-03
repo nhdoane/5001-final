@@ -1,4 +1,7 @@
-# supposed to provide a route to the backend from RN but that got put on hold
+"""
+Was originally intended to be a true backend using flask but that got sidelined
+just a relic, wont get tested and will probably be deleted by the end if i remember
+"""
 from flask import Flask
 import time
 

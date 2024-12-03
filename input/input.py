@@ -2,6 +2,7 @@
 Handles input from the cmd line and provides most of the base functionality for main.py
 Also provides methods for the GUI
 """
+from sqlite3 import ProgrammingError
 from threading import Thread, Lock
 from tkinter import messagebox
 import re
@@ -26,6 +27,7 @@ def bill_entry(newbill = ()):
     # get next bill_id to use
     bill_id = db.get_next_bill_id(user_id)
 
+    # if the newbill parameter was passed a value convert it to a dict
     if newbill:
         amt = newbill[2]
         print(amt)
@@ -37,6 +39,8 @@ def bill_entry(newbill = ()):
             'amount': convert_for_storage(amt),
             'due_date': newbill[3]
         }
+    # if newbill remained an empty tuple, collect the info
+    # this dichotomy basically exists to allow the use of the cmdline but the GUI is easier to use
     else:
         # get bill name
         while name == '':
@@ -97,8 +101,10 @@ def bill_entry(newbill = ()):
         bill_add_thread.join()
         db.close()
         return True
+    except ProgrammingError as pe:
+        raise pe
     except Exception as e:
-        print('An error occurred in bill entry:', e)
+        raise e
 
 
 def bill_list():
@@ -170,13 +176,3 @@ def backup_database(save_dir):
     except FileNotFoundError as fnf:
         messagebox.showinfo('File not found:', str(fnf))
 
-
-def test():
-    """
-    Test function that just opens a db connection and tries to pull the next unique bill ID, which is the max bill + 1
-    literally only used this for testing certain db connection functions. deprecated since i have other methods
-    successfully connecting to the database to test with
-    """
-    db = Database()
-    print(db.get_next_bill_id(1))
-    db.close()
