@@ -2,6 +2,8 @@
 A json parser used for resetting the database mostly. jparser and jparser_multi were originally just used to create the
 database when running json_testing.py (which has since been deleted), but have been appropriated for use with
 resetting and repopulating the test db
+
+wont get a test suite because its mostly just a helper method for test databases and shouldnt see regular usage
 """
 import json
 import os

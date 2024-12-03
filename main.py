@@ -2,9 +2,8 @@
 cmd line version of the program used for testing new functionality
 Gets most of its functionality from input.py and search.py
 """
-from input import bill_entry, bill_list, remove_bill
+from input.input import bill_entry, bill_list, remove_bill
 from search.search import Search
-from conversions.conversions import convert_from_storage
 
 import sys
 

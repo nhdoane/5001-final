@@ -9,7 +9,7 @@ from tkinter import ttk, messagebox, font, filedialog
 
 # custom methods/classes
 from conversions.conversions import convert_from_storage
-from input import bill_entry, bill_list, remove_bill, reset_database, backup_database
+from input.input import bill_entry, bill_list, remove_bill, reset_database, backup_database
 from search.search import Search
 
 

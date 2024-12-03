@@ -73,8 +73,8 @@ class Database:
             resp = self.cur.execute('SELECT MAX(bill_id) from bills WHERE user_id = ?;', id)
             resp = resp.fetchone()[0]
             return resp + 1
-        except Exception as e:
-            raise e('Error in get_next_bill_id')
+        except TypeError as e:
+            raise e
 
     def return_all_bills(self, user_id: int):
         """
