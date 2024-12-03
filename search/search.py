@@ -6,7 +6,7 @@ import re
 from sqlite_db.db import Database
 
 
-def validate(query, caller):
+def _validate(query, caller):
     """
     Takes in the query and a value unique to the calling function,
     and validates the query against the type in the database.
@@ -17,7 +17,10 @@ def validate(query, caller):
     """
     if caller == 's_d':
         # full date matching r"\d{4}-[0-1]?[1-9]-[0-3]?[0-9]"
-        return re.search(r"\d{0,4}", query)
+        try:
+            return re.search(r"\d{0,4}", query)
+        except TypeError as te:
+            return None
     elif caller == 's_n':
         if type(query) is not str:
             raise TypeError
@@ -52,9 +55,11 @@ class Search:
         and if it is, it creates a SQL query to be run against the database
         :return: A list containing all the items that fit the SQL query
         """
-        if not validate(self.query, 's_d'):
-            raise ValueError('The date is not in the correct format (YYYY-MM-DD)')
+        # get rid of any whitespace in the date search, as it will only mess with the regex
+        if not _validate(self.query, 's_d'):
+            raise TypeError()
         else:
+            self.query = self.query.replace(' ', '')
             self.set_query(f'%{self.query}%')
             script = ['SELECT * FROM bills WHERE due_date like ?;', (self.query,)]
             db = Database()
@@ -70,9 +75,9 @@ class Search:
         """
         result = None
         try:
-            result = validate(self.query, 's_n')
-        except TypeError as te:
-            print('Name is of an incorrect type', te)
+            result = _validate(self.query, 's_n')
+        except TypeError:
+            raise TypeError
         if result:
             self.set_query(f'%{self.query}%')
             script = ['SELECT * FROM bills WHERE name LIKE ?;', (self.query,)]
@@ -89,9 +94,9 @@ class Search:
         """
         result = None
         try:
-            result = validate(self.query, 's_b')
+            result = _validate(self.query, 's_b')
         except TypeError as te:
-            print('Bill ID should be an int', te)
+            raise TypeError
         if result:
             script = ['SELECT * FROM bills WHERE bill_id = ?;', (self.query,)]
             db = Database()
