@@ -155,8 +155,8 @@ class GUI(tk.Tk):
         if len(self.search_options.winfo_children()) > 4:
             self.__search_clear()
         billid = tk.StringVar()
-        ttk.Button(self.search_options, text='Search', command=lambda: self.__sid_helper(billid.get(), self.search_results)).pack(side='right',
-                                                                                                          anchor='ne')
+        ttk.Button(self.search_options, text='Search',
+                   command=lambda: self.__sid_helper(billid.get(), self.search_results)).pack(side='right', anchor='ne')
         ttk.Entry(self.search_options, textvariable=billid).pack(side='right', anchor='ne', padx=5, pady=2)
         ttk.Label(self.search_options, text='Enter the bill ID:').pack(side='right', anchor='ne', pady=2)
 
