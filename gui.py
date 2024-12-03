@@ -52,7 +52,6 @@ class GUI(tk.Tk):
         ttk.Button(self.left_frame, text='Quit', command=self.__close).pack(side='bottom')
         ttk.Button(self.left_frame, text='Settings', command=self._settings).pack(side='bottom')
 
-    # TODO: add add bill functionality
     def _bill_add(self):
         """
         Class helper method for adding a new bill
@@ -71,6 +70,15 @@ class GUI(tk.Tk):
         ttk.Entry(self.right_frame, textvariable=bill_amt).pack()
         ttk.Label(self.right_frame, text='Due Date:').pack()
         ttk.Entry(self.right_frame, textvariable=bill_dd).pack()
+        ttk.Button(self.right_frame, text='Add Bill',
+                   command=lambda: self.__ba_helper(bill_name.get(), bill_desc.get(), bill_amt.get(), bill_dd.get())).pack()
+
+    def __ba_helper(self, billname, billdesc, amount, billdd):
+        newbill = (billname, billdesc, int(amount), billdd)
+        if bill_entry(newbill):
+            self.__clear_frame(self.right_frame)
+            ttk.Label(self.right_frame, text='The bill has been added').pack()
+            ttk.Button(self.right_frame, text='Return', command=self._bill_add).pack()
 
     def _bill_list(self):
         """
@@ -164,7 +172,8 @@ class GUI(tk.Tk):
 
     def __search_clear(self):
         """
-        Clears out the last three added items to the search_options frame, which will always be the specific search entry/labels
+        Clears out the last three added items to the search_options frame,
+        which will always be the specific search entry/labels
         """
         for i in range(3):
             self.search_options.winfo_children()[-1].destroy()

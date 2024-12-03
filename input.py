@@ -11,7 +11,7 @@ from sqlite_db.db import Database
 from conversions.conversions import convert_for_storage, convert_from_storage
 
 
-def bill_entry():
+def bill_entry(newbill = ()):
     """
     opens a connection to the database, collects relevant bill information, and passes that information to the database.
     """
@@ -26,63 +26,79 @@ def bill_entry():
     # get next bill_id to use
     bill_id = db.get_next_bill_id(user_id)
 
-    # get bill name
-    while name == '':
-        try:
-            # ph is placeholder
-            ph_name = input('Please enter the bill name: ')
-            if ph_name.isdigit():
-                print('Please enter a string')
-            else:
-                name = ph_name
-        except Exception as e:
-            print('Error: ', e)
+    if newbill:
+        amt = newbill[2]
+        print(amt)
+        bill = {
+            'id': bill_id,
+            'user_id': user_id,
+            'name': newbill[0],
+            'description': newbill[1],
+            'amount': convert_for_storage(amt),
+            'due_date': newbill[3]
+        }
+    else:
+        # get bill name
+        while name == '':
+            try:
+                # ph is placeholder
+                ph_name = input('Please enter the bill name: ')
+                if ph_name.isdigit():
+                    print('Please enter a string')
+                else:
+                    name = ph_name
+            except Exception as e:
+                print('Error: ', e)
 
-    # get bill desc
-    while desc == '':
-        try:
-            desc = input('Please enter a bill description: ')
-        except Exception as e:
-            print('Error: ', e)
+        # get bill desc
+        while desc == '':
+            try:
+                desc = input('Please enter a bill description: ')
+            except Exception as e:
+                print('Error: ', e)
 
-    # get bill amount
-    while amt == -1:
-        try:
-            ph_amt = input('Enter bill amount: ')
-            if ph_amt.isalpha():
-                print('Cannot be a string')
-            else:
-                amt = float(ph_amt)
-        except Exception as e:
-            print('Error: ', e)
+        # get bill amount
+        while amt == -1:
+            try:
+                ph_amt = input('Enter bill amount: ')
+                if ph_amt.isalpha():
+                    print('Cannot be a string')
+                else:
+                    amt = float(ph_amt)
+            except Exception as e:
+                print('Error: ', e)
 
-    # get due_date
-    while due_date == -1:
-        try:
-            ph_dd = input('enter a date in the format YYYY-MM-DD: ')
-            if re.fullmatch(r"\d{4}-[0-1]?[1-9]-[0-3]?[0-9]", ph_dd):
-                due_date = ph_dd
-            else:
-                print('Please enter the date in the requested format')
-        except Exception as e:
-            print('Error: ', e)
+        # get due_date
+        while due_date == -1:
+            try:
+                ph_dd = input('enter a date in the format YYYY-MM-DD: ')
+                if re.fullmatch(r"\d{4}-[0-1]?[1-9]-[0-3]?[0-9]", ph_dd):
+                    due_date = ph_dd
+                else:
+                    print('Please enter the date in the requested format')
+            except Exception as e:
+                print('Error: ', e)
 
-    # assign them out to a dict
-    bill = {
-        'id': bill_id,
-        'user_id': user_id,
-        'name': name,
-        'description': desc,
-        'amount': convert_for_storage(amt),
-        'due_date': due_date
-    }
+        # assign them out to a dict
+        bill = {
+            'id': bill_id,
+            'user_id': user_id,
+            'name': name,
+            'description': desc,
+            'amount': convert_for_storage(amt),
+            'due_date': due_date
+        }
 
-    # send them away to the local database
-    lock = Lock()
-    bill_add_thread = Thread(target=db.insert_bill(bill), args=(lock,))
-    bill_add_thread.start()
-    bill_add_thread.join()
-    db.close()
+    try:
+        # send them away to the local database
+        lock = Lock()
+        bill_add_thread = Thread(target=db.insert_bill(bill), args=(lock,))
+        bill_add_thread.start()
+        bill_add_thread.join()
+        db.close()
+        return True
+    except Exception as e:
+        print('An error occurred in bill entry:', e)
 
 
 def bill_list():
