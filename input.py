@@ -106,6 +106,7 @@ def bill_list():
         amount = format(convert_from_storage(bill[4]), '.2f')
         data.append([bill[0], bill[2], amount, bill[5], bill[3]])
     # print(tabulate(data, headers=header, tablefmt='grid', floatfmt='.2f'))
+    db.close()
     return data
 
 
@@ -117,6 +118,7 @@ def remove_bill(bill_id: int):
     """
     db = Database()
     result = db.remove_bill(bill_id)
+    db.close()
     return result
 
 

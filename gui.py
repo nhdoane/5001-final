@@ -14,6 +14,10 @@ from search.search import Search
 
 
 def get_font_name():
+    """
+    Gets the default font of the system that tkinter is using
+    :return: Dict a font object
+    """
     return font.nametofont('TkDefaultFont').actual()
 
 
@@ -100,7 +104,7 @@ class GUI(tk.Tk):
         ttk.Button(self.search_options, text='Search', command=lambda: self.__sd_helper(date.get())).pack(side='right',
                                                                                                           anchor='ne')
         ttk.Entry(self.search_options, textvariable=date).pack(side='right', anchor='ne', padx=5, pady=2)
-        ttk.Label(self.search_options, text='Enter date (e.g. 2024-04-14)').pack(side='right', anchor='ne', pady=2)
+        ttk.Label(self.search_options, text='Enter date (e.g. 2024-04-14):').pack(side='right', anchor='ne', pady=2)
 
     def __sd_helper(self, date):
         self.__clear_frame(self.search_results)
@@ -123,7 +127,7 @@ class GUI(tk.Tk):
         ttk.Button(self.search_options, text='Search', command=lambda: self.__sn_helper(name.get())).pack(side='right',
                                                                                                           anchor='ne')
         ttk.Entry(self.search_options, textvariable=name).pack(side='right', anchor='ne', padx=5, pady=2)
-        ttk.Label(self.search_options, text='Enter the bill name').pack(side='right', anchor='ne', pady=2)
+        ttk.Label(self.search_options, text='Enter the bill name:').pack(side='right', anchor='ne', pady=2)
 
     def __sn_helper(self, name):
         self.__clear_frame(self.search_results)
@@ -143,21 +147,20 @@ class GUI(tk.Tk):
         if len(self.search_options.winfo_children()) > 4:
             self.__search_clear()
         billid = tk.StringVar()
-        ttk.Button(self.search_options, text='Search', command=lambda: self.__sid_helper(billid.get())).pack(side='right',
+        ttk.Button(self.search_options, text='Search', command=lambda: self.__sid_helper(billid.get(), self.search_results)).pack(side='right',
                                                                                                           anchor='ne')
         ttk.Entry(self.search_options, textvariable=billid).pack(side='right', anchor='ne', padx=5, pady=2)
-        ttk.Label(self.search_options, text='Enter the bill ID').pack(side='right', anchor='ne', pady=2)
+        ttk.Label(self.search_options, text='Enter the bill ID:').pack(side='right', anchor='ne', pady=2)
 
-    def __sid_helper(self, billid):
-        self.__clear_frame(self.search_results)
+    def __sid_helper(self, billid, frame):
+        self.__clear_frame(frame)
         query = Search()
         query.set_query(int(billid))
         resp = query.search_billID()
-        print(resp)
         bills = []
         amount = format(convert_from_storage(resp[0][4]), '.2f')
         bills.append([resp[0][0], resp[0][2], amount, resp[0][5], resp[0][3]])
-        self.__bill_table(bills, self.search_results)
+        self.__bill_table(bills, frame)
 
     def __search_clear(self):
         """
@@ -166,12 +169,44 @@ class GUI(tk.Tk):
         for i in range(3):
             self.search_options.winfo_children()[-1].destroy()
 
-    # TODO: add remove bill functionality
     def _remove_bill(self):
         """
         Class helper method for displaying the remove bill section
         """
-        pass
+        self.__clear_frame(self.right_frame)
+        ttk.Label(self.right_frame, text='Enter the ID of the bill to remove:').pack()
+        billid = tk.StringVar()
+        ttk.Entry(self.right_frame, textvariable=billid).pack()
+        ttk.Button(self.right_frame,text='Search', command=lambda: self.__rb_helper(int(billid.get()))).pack()
+
+    def __rb_helper(self, billid):
+        self.__clear_frame(self.right_frame)
+        query = Search()
+        query.set_query(int(billid))
+        resp = query.search_billID()
+        if resp:
+            bills = []
+            amount = format(convert_from_storage(resp[0][4]), '.2f')
+            bills.append([resp[0][0], resp[0][2], amount, resp[0][5], resp[0][3]])
+            bill = (f'Bill ID: {resp[0][0]}\n'
+                    f'Name: {resp[0][2]}\n'
+                    f'Amount: {amount}\n'
+                    f'Due Date: {resp[0][5]}\n'
+                    f'Description: {resp[0][3]}')
+            ttk.Label(self.right_frame, text=bill).pack()
+            ttk.Label(self.right_frame, text='Delete this entry?').pack()
+            ttk.Button(self.right_frame, text='Delete', command=lambda: self.__rb(billid)).pack()
+            ttk.Button(self.right_frame, text='Cancel', command= self._remove_bill).pack()
+        else:
+            ttk.Label(self.right_frame, text='Entry does not exist').pack()
+            ttk.Button(self.right_frame, text='Return', command=self._remove_bill).pack()
+
+    def __rb(self, billid):
+        remove_bill(billid)
+        self.__clear_frame(self.right_frame)
+        ttk.Label(self.right_frame, text='The bill has been deleted').pack()
+        ttk.Button(self.right_frame, text='Return', command=self._remove_bill).pack()
+
 
     def _settings(self):
         """
