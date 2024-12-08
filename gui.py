@@ -291,7 +291,7 @@ class GUI(tk.Tk):
 
     def __bill_table(self, bills, frame):
         if not bills:
-            no_results = ttk.Label(self.search_results, text='The search returned no results')
+            no_results = ttk.Label(frame, text='The search returned no results')
             no_results.config(font=font.Font(family=get_font_name()['family'], size=12, weight='bold'))
             no_results.pack(side='top', anchor='center')
         else:
