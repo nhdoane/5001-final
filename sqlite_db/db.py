@@ -3,7 +3,7 @@ database class. creates/opens the database, and houses all the functions for int
 NOTE: error handling is incredibly generic and not best practice at the moment
 """
 import sqlite3 as sql
-import os
+import os, platform
 import shutil
 
 _here = os.path.dirname(os.path.abspath(__file__))
@@ -113,7 +113,10 @@ class Database:
     # these probably could have been one method instead of two
     # but i really didnt want to call a method that deletes the database from outside the db class
     def __delete_db(self):
-        db_file = _here + '\\local.db'
+        if platform.system() == 'Windows':
+            db_file = _here + '\\local.db'
+        else:
+            db_file = _here + '/local.db'
         if os.path.isfile(db_file):
             os.remove(db_file)
         else:
@@ -123,7 +126,10 @@ class Database:
         self.__delete_db()
 
     def backup_db(self, save_dir):
-        db_file = _here + '\\local.db'
+        if platform.system() == "Windows:
+            db_file = _here + '\\local.db'
+        else:
+            db_file = _here + '/local.db'
         if os.path.isfile(db_file):
             shutil.copy(db_file, save_dir)
         else:
