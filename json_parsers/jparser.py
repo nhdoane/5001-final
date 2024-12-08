@@ -6,7 +6,7 @@ resetting and repopulating the test db
 wont get a test suite because its mostly just a helper method for test databases and shouldnt see regular usage
 """
 import json
-import os
+import os, platform
 from threading import Thread, Lock
 
 from sqlite_db.db import Database
@@ -73,7 +73,10 @@ def db_test_data():
         lock = Lock()
         # testing multi bill json input
         here = os.path.dirname(os.path.abspath(__file__))
-        json_input = here + '\\test.json'
+        if platform.system() == 'Windows':    
+            json_input = here + '\\test.json'
+        else:
+            json_input = here + '/test.json'
 
         with open(json_input) as file:
             parsed_input = json.load(file)
@@ -86,7 +89,10 @@ def db_test_data():
         jpm_thread.join()
 
         # testing single bill json input
-        jsingle_input = here + '\\test_single.json'
+        if platform.system() == 'Windows':    
+            jsingle_input = here + '\\test_single.json'
+        else:
+            jsingle_input = here + '/test_single.json'
 
         with open(jsingle_input) as file:
             parsed_input = json.load(file)
