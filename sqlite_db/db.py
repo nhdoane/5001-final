@@ -126,7 +126,7 @@ class Database:
         self.__delete_db()
 
     def backup_db(self, save_dir):
-        if platform.system() == "Windows:
+        if platform.system() == 'Windows':
             db_file = _here + '\\local.db'
         else:
             db_file = _here + '/local.db'
