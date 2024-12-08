@@ -11,3 +11,4 @@ If you are not testing on windows, you may need to install some additional packa
 sudo apt install python3-tk
 sudo apt install sqlite
 ```
+You would also need to reinstall the venv if you are getting it from here. 
